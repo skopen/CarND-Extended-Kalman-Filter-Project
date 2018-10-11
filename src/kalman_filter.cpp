@@ -1,5 +1,6 @@
 #include "kalman_filter.h"
 #include <iostream>
+#include <math.h>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -59,24 +60,35 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	try
 	{
 		y = z - tools.cartesianToPolar(x_);
+
+		// make sure resultant phi is between [-PI, +PI].
+		double phi = y(1);
+
+		if (phi > M_PI)
+		{
+			while (phi > M_PI)
+			{
+				phi -= 2*M_PI;
+			}
+		}
+		else if (phi < -M_PI)
+		{
+			while (phi < -M_PI)
+			{
+				phi += 2*M_PI;
+			}
+		}
+
+		y(1) = phi;
 	}
 	catch (int e)
 	{
-		cout << "UpdateEKF not applied due to UpdateEKF numerical issues.";
+		cout << "UpdateEKF not applied due to potential divide-by-zero numerical issues.";
 		return;
 	}
 
-	cout << "H_ = " << H_;
-	cout << "P_ = " << P_;
-
 	MatrixXd S = H_*P_*H_.transpose() + R_;
-
-	cout << "S = " << S;
-
 	MatrixXd K = P_*H_.transpose()*S.inverse();
-
-	cout << "K = " << K;
-
 	x_ = x_ + K*y;
 
 	long x_size = x_.size();

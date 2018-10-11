@@ -20,7 +20,7 @@ FusionEKF::FusionEKF() {
   R_laser_ = MatrixXd(2, 2);
   R_radar_ = MatrixXd(3, 3);
   H_laser_ = MatrixXd(2, 4);
-  Hj_ = MatrixXd(3, 4);
+ // Hj_ = MatrixXd(3, 4);
 
   //measurement covariance matrix - laser
   R_laser_ << 0.0225, 0,
@@ -40,9 +40,9 @@ FusionEKF::FusionEKF() {
   H_laser_ << 1, 0, 0, 0,
 		  	  0, 1, 0, 0;
 
-  Hj_ << 0, 0, 0, 0,
-		 0, 0, 0, 0,
-		 0, 0, 0, 0;
+//  Hj_ << 0, 0, 0, 0,
+//		 0, 0, 0, 0,
+	//	 0, 0, 0, 0;
 }
 
 /**
@@ -149,14 +149,14 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	  try
 	  {
 		  ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
+		  ekf_.R_ = R_radar_;
+		  ekf_.UpdateEKF(measurement_pack.raw_measurements_);
 	  }
 	  catch (int e)
 	  {
+		  cout << "Skipping UpdateEKF due to potential divide-by-zero issues.";
 		  return;
 	  }
-
-	  ekf_.R_ = R_radar_;
-	  ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   } else {
     // Laser updates
 

@@ -71,9 +71,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	//check division by zero
     if (pxy < ZERO_LIMIT || pxy3 < ZERO_LIMIT)
     {
-        cout << "Divide by zero; skipping this measurement update.";
-        exit(1);
-        throw 20;
+        throw 1;
     }
 
 	//compute the Jacobian matrix
@@ -115,31 +113,12 @@ VectorXd Tools::cartesianToPolar(const VectorXd& c)
 
 	if (px*px + py*py < ZERO_LIMIT)
 	{
-		cout << "Divide by zero; skipping this polar conversion.";
-		exit(1);
-		throw 20;
+		throw 1;
 	}
 
 	double rho = sqrt(px*px + py*py);
 
 	double phi = atan2(py, px);
-
-	if (phi > M_PI)
-	{
-		while (phi > M_PI)
-		{
-			phi -= 2*M_PI;
-		}
-	}
-	else if (phi < -M_PI)
-	{
-		while (phi < -M_PI)
-		{
-			phi += 2*M_PI;
-		}
-	}
-
-
 
 	double rhodot = (px*vx + py*vy)/(sqrt(px*px + py*py));
 
