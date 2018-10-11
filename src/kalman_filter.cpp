@@ -1,7 +1,10 @@
 #include "kalman_filter.h"
+#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+
+using namespace std;
 
 // Please note that the Eigen library does not initialize 
 // VectorXd or MatrixXd objects with zeros upon creation.
@@ -51,8 +54,17 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   TODO:
     * update the state by using Extended Kalman Filter equations
   */
+	VectorXd y;
 
-	VectorXd y = z - tools.cartesianToPolar(x_);
+	try
+	{
+		y = z - tools.cartesianToPolar(x_);
+	}
+	catch (int e)
+	{
+		cout << "UpdateEKF not applied due to UpdateEKF numerical issues.";
+		return;
+	}
 
 	MatrixXd S = H_*P_*H_.transpose() + R_;
 	MatrixXd K = P_*H_.transpose()*S.inverse();
