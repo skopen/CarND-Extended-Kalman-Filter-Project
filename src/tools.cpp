@@ -65,15 +65,16 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	//TODO: YOUR CODE HERE
 
 	double pxy = px*px + py*py;
+	double pxy_root = sqrt(pxy);
+	double pxy3 = pxy_root*pxy_root*pxy_root;
+
 	//check division by zero
-    if (pxy < 0.001)
+    if (pxy < ZERO_LIMIT || pxy3 < ZERO_LIMIT)
     {
         cout << "Divide by zero; skipping this measurement update.";
+        exit(1);
         throw 20;
     }
-
-	double pxy_root = pow(pxy, 0.5);
-	double pxy3 = pxy_root*pxy_root*pxy_root;
 
 	//compute the Jacobian matrix
     Hj(0, 0) = px/pxy_root;
@@ -106,10 +107,14 @@ VectorXd Tools::cartesianToPolar(const VectorXd& c)
 	double vx = c(2);
 	double vy = c(3);
 
-	double rho = sqrt(px*px + py*py);
-
-	if (px*px + py*py < 0.001)
+	if (px*px + py*py < ZERO_LIMIT)
+	{
+		cout << "Divide by zero; skipping this polar conversion.";
+		exit(1);
 		throw 20;
+	}
+
+	double rho = sqrt(px*px + py*py);
 
 	double phi = atan2(py, px);
 

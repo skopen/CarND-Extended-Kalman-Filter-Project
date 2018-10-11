@@ -33,6 +33,8 @@ public:
 
   VectorXd cartesianToPolar(const VectorXd& c);
 
+  double ZERO_LIMIT = 0.0001;
+
 
 };
 
