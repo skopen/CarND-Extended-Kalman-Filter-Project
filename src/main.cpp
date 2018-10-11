@@ -45,8 +45,8 @@ int main()
 
     if (length && length > 2 && data[0] == '4' && data[1] == '2')
     {
-
       auto s = hasData(std::string(data));
+
       if (s != "") {
       	
         auto j = json::parse(s);
